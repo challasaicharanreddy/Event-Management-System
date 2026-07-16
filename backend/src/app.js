@@ -6,6 +6,7 @@ import morgan from "morgan";
 import errorHandler from "./middleware/error.middleware.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import eventRoutes from "./modules/event/event.routes.js";
+import registrationRoutes from "./modules/registration/registration.routes.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(errorHandler);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/events",eventRoutes);
+app.use("/api/registrations", registrationRoutes);
 // Test Route
 app.get("/", (req, res) => {
   res.status(200).json({
