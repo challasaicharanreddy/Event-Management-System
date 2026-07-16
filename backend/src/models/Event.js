@@ -18,12 +18,12 @@ const eventSchema = new mongoose.Schema(
       type: String,
       enum: [
         "Workshop",
-        "Seminar",
         "Hackathon",
+        "Seminar",
         "Conference",
         "Sports",
-        "Cultural",
         "Technical",
+        "Cultural",
         "Other",
       ],
       default: "Other",
@@ -37,20 +37,16 @@ const eventSchema = new mongoose.Schema(
     venue: {
       type: String,
       required: true,
+      trim: true,
     },
 
-    date: {
+    startDateTime: {
       type: Date,
       required: true,
     },
 
-    startTime: {
-      type: String,
-      required: true,
-    },
-
-    endTime: {
-      type: String,
+    endDateTime: {
+      type: Date,
       required: true,
     },
 
