@@ -1,60 +1,51 @@
-import Event from "../../models/Event.js";
-import slugify from "slugify";
-import ApiError from "../../utils/ApiError.js";
+import transporter from "../config/mail.js";
 
-export const createEvent = async (data, userId) => {
+export const sendRegistrationEmail = async ({
+  user,
+  event,
+  registration,
+}) => {
+  await transporter.sendMail({
+    from: `"Event Management System" <${process.env.EMAIL_USER}>`,
+    to: user.email,
+    subject: `Registration Confirmed - ${event.title}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;padding:20px">
+        <h2>Hello ${user.name} 👋</h2>
 
-    if(new Date(data.endDateTime) <= new Date(data.startDateTime)){
-        throw new ApiError(400,"End time must be after start time");
-    }
+        <p>Your registration has been confirmed.</p>
 
-    const slug = slugify(data.title,{
-        lower:true,
-        strict:true
-    });
+        <hr/>
 
-    const event = await Event.create({
-        ...data,
-        slug,
-        createdBy:userId
-    });
+        <h3>${event.title}</h3>
 
-    return event;
-};
+        <p><strong>Venue:</strong> ${event.venue}</p>
 
-export const getAllEvents = async () => {
-    return await Event.find().populate("createdBy","name email");
-};
+        <p>
+          <strong>Date:</strong>
+          ${new Date(event.startDateTime).toLocaleString()}
+        </p>
 
-export const getEventById = async(id)=>{
-    const event=await Event.findById(id).populate("createdBy","name");
+        <p>
+          <strong>Ticket ID:</strong>
+          ${registration.ticketId}
+        </p>
 
-    if(!event){
-        throw new ApiError(404,"Event not found");
-    }
+        <br>
 
-    return event;
-};
+        <img
+          src="${registration.qrCode}"
+          width="220"
+        />
 
-export const updateEvent=async(id,data)=>{
+        <br><br>
 
-    const event=await Event.findByIdAndUpdate(id,data,{
-        new:true,
-        runValidators:true
-    });
+        <p>Please show this QR code during check-in.</p>
 
-    if(!event){
-        throw new ApiError(404,"Event not found");
-    }
+        <hr/>
 
-    return event;
-};
-
-export const deleteEvent=async(id)=>{
-
-    const event=await Event.findByIdAndDelete(id);
-
-    if(!event){
-        throw new ApiError(404,"Event not found");
-    }
+        <p>Thank you for registering.</p>
+      </div>
+    `,
+  });
 };

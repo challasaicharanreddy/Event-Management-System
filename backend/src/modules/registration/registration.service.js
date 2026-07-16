@@ -2,6 +2,8 @@ import Event from "../../models/Event.js";
 import Registration from "../../models/Registration.js";
 import ApiError from "../../utils/ApiError.js";
 import QRCode from "qrcode";
+import User from "../../models/User.js";
+import { sendRegistrationEmail } from "../../services/email.service.js";
 
 export const registerForEvent = async (eventId, userId) => {
   const event = await Event.findById(eventId);
@@ -40,6 +42,30 @@ export const registerForEvent = async (eventId, userId) => {
 
   await registration.save();
 
+  const user = await User.findById(userId);
+
+  import registrationEmailTemplate from "../../templates/registrationEmail.js";
+  import { sendEmail } from "../../services/email.service.js";
+  
+  const html = registrationEmailTemplate({
+      user,
+      event,
+      registration
+  });
+  
+  try{
+  
+      await sendEmail({
+          to:user.email,
+          subject:`Registration Confirmed | ${event.title}`,
+          html
+      });
+  
+  }catch(error){
+  
+      console.error(error.message);
+  
+  }
   // Increment registration count
   event.registeredCount += 1;
   await event.save();
