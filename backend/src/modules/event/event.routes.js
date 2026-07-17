@@ -16,27 +16,31 @@ createEventValidator,
 validate
 } from "./event.validator.js";
 
+import upload from "../../middleware/upload.middleware.js";
+
 const router=express.Router();
 
 router
 .route("/")
 .get(getAllEvents)
 .post(
-protect,
-authorize("admin","organizer"),
-createEventValidator,
-validate,
-createEvent
-);
+    protect,
+    authorize("admin","organizer"),
+    upload.single("banner"),
+    createEventValidator,
+    validate,
+    createEvent
+    );
 
 router
 .route("/:id")
 .get(getEventById)
 .put(
-protect,
-authorize("admin","organizer"),
-updateEvent
-)
+    protect,
+    authorize("admin","organizer"),
+    upload.single("banner"),
+    updateEvent
+    )
 .delete(
 protect,
 authorize("admin"),

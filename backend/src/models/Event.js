@@ -30,9 +30,15 @@ const eventSchema = new mongoose.Schema(
     },
 
     banner: {
-      type: String,
-      default: "",
-    },
+      url: {
+          type: String,
+          default: "",
+      },
+      publicId: {
+          type: String,
+          default: "",
+      },
+  },
 
     venue: {
       type: String,

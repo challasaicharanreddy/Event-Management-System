@@ -4,7 +4,11 @@ import * as eventService from "./event.service.js";
 
 export const createEvent=asyncHandler(async(req,res)=>{
 
-    const event=await eventService.createEvent(req.body,req.user._id);
+    const event = await eventService.createEvent(
+        req.body,
+        req.user._id,
+        req.file
+    );
 
     res.status(201).json(
         new ApiResponse(201,"Event created successfully",event)
@@ -31,7 +35,11 @@ export const getEventById=asyncHandler(async(req,res)=>{
 
 export const updateEvent=asyncHandler(async(req,res)=>{
 
-    const event=await eventService.updateEvent(req.params.id,req.body);
+    const event = await eventService.updateEvent(
+        req.params.id,
+        req.body,
+        req.file
+    );
 
     res.json(
         new ApiResponse(200,"Event updated",event)
